@@ -194,7 +194,7 @@ function saveItems(type, items) {
 
 function createItem(type, item) {
   const items = readItems(type);
-  saveItems(type, [{ id: createId(), ...item }, ...items]);
+  saveItems(type, [{ id: createId(), createdAt: new Date().toISOString(), ...item }, ...items]);
 }
 
 function updateItem(type, id, itemUpdate) {
@@ -375,6 +375,8 @@ function renderProfileSummary(activeId) {
         ${renderSelectedList('Selected goals / values', goals, 'title', 'value', 'Add goals from Goals / Values to give the feed direction.')}
       </div>
 
+      ${renderRecentActivity()}
+
       <div>
         <p class="eyebrow">Local insight placeholders</p>
         <div class="insight-grid">
@@ -462,6 +464,97 @@ function renderSelectedList(title, items, titleKey, bodyKey, emptyText) {
       }
     </div>
   `;
+}
+
+function renderRecentActivity() {
+  const activities = getRecentActivities();
+
+  return `
+    <section class="recent-activity" aria-label="Recent local activity">
+      <div>
+        <p class="eyebrow">Recent activity</p>
+        <h3>Latest local additions</h3>
+      </div>
+
+      ${
+        activities.length === 0
+          ? '<p class="empty-state">Recent additions will appear here after you add a source, goal, or saved insight.</p>'
+          : `<div class="activity-list">
+              ${activities
+                .map(
+                  (activity) => `
+                    <article class="activity-item">
+                      <span>${activity.type}</span>
+                      <div>
+                        <strong>${escapeHtml(activity.title)}</strong>
+                        <p>${escapeHtml(activity.body)}</p>
+                        <small>${formatActivityDate(activity.createdAt)}</small>
+                      </div>
+                    </article>
+                  `
+                )
+                .join('')}
+            </div>`
+      }
+    </section>
+  `;
+}
+
+function getRecentActivities() {
+  const mentors = readItems('mentors').map((mentor, index) => ({
+    type: 'Source',
+    title: mentor.name,
+    body: mentor.note,
+    createdAt: mentor.createdAt,
+    fallbackOrder: index
+  }));
+  const goals = readItems('goals').map((goal, index) => ({
+    type: 'Goal',
+    title: goal.title,
+    body: goal.value,
+    createdAt: goal.createdAt,
+    fallbackOrder: index + 100
+  }));
+  const insights = readItems('insights').map((insight, index) => ({
+    type: 'Insight',
+    title: 'Saved insight',
+    body: insight.text,
+    createdAt: insight.createdAt,
+    fallbackOrder: index + 200
+  }));
+
+  return [...mentors, ...goals, ...insights]
+    .sort((first, second) => {
+      const firstTime = Date.parse(first.createdAt || '');
+      const secondTime = Date.parse(second.createdAt || '');
+
+      if (Number.isFinite(firstTime) && Number.isFinite(secondTime)) {
+        return secondTime - firstTime;
+      }
+
+      if (Number.isFinite(firstTime)) {
+        return -1;
+      }
+
+      if (Number.isFinite(secondTime)) {
+        return 1;
+      }
+
+      return first.fallbackOrder - second.fallbackOrder;
+    })
+    .slice(0, 5);
+}
+
+function formatActivityDate(value) {
+  if (!value) {
+    return 'Saved locally';
+  }
+
+  return `Added ${new Date(value).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  })}`;
 }
 
 function renderInsightCards(mentors, goals) {
