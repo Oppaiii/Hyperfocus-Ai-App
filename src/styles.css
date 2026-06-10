@@ -316,7 +316,8 @@ button {
 .insight-capture h3,
 .saved-insights-panel h3,
 .settings-panel h3,
-.settings-row h3 {
+.settings-row h3,
+.settings-checklist h3 {
   margin: 0;
   letter-spacing: -0.03em;
 }
@@ -703,6 +704,42 @@ button {
   border: 1px solid var(--line);
   border-radius: 20px;
   background: rgba(0, 0, 0, 0.14);
+}
+
+.settings-checklist {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.settings-checklist ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.settings-checklist li {
+  color: var(--soft);
+}
+
+.settings-checklist li::before {
+  content: "Ready";
+  display: inline-flex;
+  margin-right: 10px;
+  padding: 4px 7px;
+  border: 1px solid rgba(125, 211, 176, 0.28);
+  border-radius: 999px;
+  color: var(--success);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(125, 211, 176, 0.08);
 }
 
 .settings-counts {

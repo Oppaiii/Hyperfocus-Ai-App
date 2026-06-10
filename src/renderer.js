@@ -1037,6 +1037,18 @@ function renderSettingsPanel() {
         <button class="secondary-button disabled-button" type="button" disabled>Coming later</button>
       </div>
 
+      <div class="settings-checklist" aria-label="AI provider readiness checklist">
+        <p class="eyebrow">Readiness checklist</p>
+        <h3>Prepared for a future provider</h3>
+        <ul>
+          <li>Prompt builder exists</li>
+          <li>Prompt and provider smoke tests exist</li>
+          <li>Provider boundary exists</li>
+          <li>Local mock response exists</li>
+          <li>Safety-focused coach flow exists</li>
+        </ul>
+      </div>
+
       <div>
         <p class="eyebrow">Local data</p>
         <h3 id="local-data-title">Clear local app data</h3>

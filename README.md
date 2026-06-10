@@ -23,6 +23,7 @@ This first pass contains only the app foundation:
 - Local-only AI Coach prompt builder and prompt preview
 - Local-only AI provider boundary with a deterministic mock reply
 - Disabled Settings placeholder for a future real AI provider connection
+- Read-only Settings checklist for AI provider readiness
 - Local-only Settings reset control for clearing app data
 
 No AI logic or external content source integrations are implemented yet.
