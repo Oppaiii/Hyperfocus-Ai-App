@@ -871,6 +871,7 @@ function renderAiCoachPanel() {
   const recentGoal = goals[0];
   const coachCheckIn = readCoachCheckIn();
   const coachPrompt = buildLocalCoachPrompt();
+  const mockCoachReply = buildLocalCoachReply(coachPrompt);
 
   return `
     <section class="coach-panel" aria-labelledby="coach-check-in-title">
@@ -931,6 +932,8 @@ function renderAiCoachPanel() {
       </form>
 
       ${renderCoachPromptPreview(coachPrompt)}
+
+      ${renderMockCoachReply(mockCoachReply)}
     </section>
   `;
 }
@@ -968,6 +971,39 @@ function renderCoachPromptPreview(coachPrompt) {
         <p class="profile-intro">This is built locally from your focus, goals, latest check-in, recent insights, and coach rules. No API call is made.</p>
       </div>
       <pre>${escapeHtml(coachPrompt.previewText)}</pre>
+    </section>
+  `;
+}
+
+function buildLocalCoachReply(coachPrompt) {
+  if (!coachPrompt || !window.AiProvider) {
+    return null;
+  }
+
+  const provider = window.AiProvider.createMockCoachProvider();
+  return provider.generateCoachReply(coachPrompt);
+}
+
+function renderMockCoachReply(reply) {
+  if (!reply) {
+    return `
+      <section class="mock-reply" aria-label="Local mock coach reply">
+        <p class="eyebrow">Mock coach reply</p>
+        <h3>Mock provider is not loaded.</h3>
+        <p class="profile-intro">A local mock reply will appear here when the provider boundary is available.</p>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="mock-reply" aria-label="Local mock coach reply">
+      <div>
+        <p class="eyebrow">Mock coach reply</p>
+        <h3>Local provider output</h3>
+        <p class="profile-intro">This deterministic response comes from the local mock provider. No API call is made.</p>
+      </div>
+      <pre>${escapeHtml(reply.replyText)}</pre>
+      <span>${escapeHtml(reply.provider)} · ${escapeHtml(reply.mode)}</span>
     </section>
   `;
 }
