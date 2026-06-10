@@ -341,38 +341,64 @@ function renderProfileSummary(activeId) {
   const mentors = readItems('mentors');
   const goals = readItems('goals');
 
-  if (mentors.length === 0 && goals.length === 0) {
-    return `
-      <section class="profile-summary" aria-label="Focus profile summary">
-        <p class="eyebrow">Focus profile</p>
-        <h3>Add your first trusted source and goal to start shaping the feed.</h3>
-        <p class="profile-intro">Use Mentors / Sources and Goals / Values to build a small local profile. Nothing leaves this app.</p>
-      </section>
-    `;
-  }
-
   return `
-    <section class="profile-summary" aria-label="Focus profile summary">
-      <p class="eyebrow">Focus profile</p>
-      <div class="summary-columns">
-        ${renderMiniList('Trusted sources', mentors, 'name', 'note')}
-        ${renderMiniList('Goals and values', goals, 'title', 'value')}
+    <section class="focus-dashboard" aria-label="Focus Feed alignment snapshot">
+      <div class="alignment-card">
+        <div>
+          <p class="eyebrow">Alignment snapshot</p>
+          <h3>${getAlignmentTitle(mentors, goals)}</h3>
+          <p class="profile-intro">${getAlignmentMessage(mentors, goals)}</p>
+        </div>
+      </div>
+
+      <div class="selected-grid">
+        ${renderSelectedList('Selected mentors / sources', mentors, 'name', 'note', 'Add sources from Mentors / Sources to tune this feed.')}
+        ${renderSelectedList('Selected goals / values', goals, 'title', 'value', 'Add goals from Goals / Values to give the feed direction.')}
+      </div>
+
+      <div>
+        <p class="eyebrow">Local insight placeholders</p>
+        <div class="insight-grid">
+          ${renderInsightCards(mentors, goals)}
+        </div>
       </div>
     </section>
   `;
 }
 
-function renderMiniList(title, items, titleKey, bodyKey) {
-  const preview = items.slice(0, 3);
+function getAlignmentTitle(mentors, goals) {
+  if (mentors.length > 0 && goals.length > 0) {
+    return 'Your local focus profile is ready for review.';
+  }
 
+  return 'Build a small profile to shape your focus feed.';
+}
+
+function getAlignmentMessage(mentors, goals) {
+  if (mentors.length > 0 && goals.length > 0) {
+    return `This static snapshot lines up ${mentors.length} trusted source${mentors.length === 1 ? '' : 's'} with ${goals.length} goal${goals.length === 1 ? '' : 's'} or value${goals.length === 1 ? '' : 's'}. No AI or external content is running yet.`;
+  }
+
+  if (mentors.length > 0) {
+    return 'You have trusted voices saved. Add one goal or value next so the feed can show what those inputs should support.';
+  }
+
+  if (goals.length > 0) {
+    return 'You have goals and values saved. Add one trusted source next so the feed can show who helps reinforce them.';
+  }
+
+  return 'Add a few trusted sources and goals to turn this Home screen into a simple local focus dashboard.';
+}
+
+function renderSelectedList(title, items, titleKey, bodyKey, emptyText) {
   return `
-    <div>
+    <div class="selected-list">
       <h3>${title}</h3>
       ${
-        preview.length === 0
-          ? '<p class="profile-intro">Nothing added yet.</p>'
+        items.length === 0
+          ? `<p class="empty-state">${emptyText}</p>`
           : `<ul class="mini-list">
-              ${preview
+              ${items
                 .map(
                   (item) => `
                     <li>
@@ -386,6 +412,72 @@ function renderMiniList(title, items, titleKey, bodyKey) {
       }
     </div>
   `;
+}
+
+function renderInsightCards(mentors, goals) {
+  const cards = buildInsightCards(mentors, goals);
+
+  return cards
+    .map(
+      (card) => `
+        <article class="insight-card">
+          <span class="insight-tag">${card.tag}</span>
+          <h3>${escapeHtml(card.title)}</h3>
+          <p>${escapeHtml(card.body)}</p>
+        </article>
+      `
+    )
+    .join('');
+}
+
+function buildInsightCards(mentors, goals) {
+  if (mentors.length === 0 && goals.length === 0) {
+    return [
+      {
+        tag: 'Start',
+        title: 'Add your first source',
+        body: 'Choose one person whose thinking you want nearby when attention gets noisy.'
+      },
+      {
+        tag: 'Direction',
+        title: 'Add one goal or value',
+        body: 'Name the outcome or principle that should guide what makes it into your feed.'
+      },
+      {
+        tag: 'Local only',
+        title: 'Your profile stays on this device',
+        body: 'This snapshot is generated from local entries only, without AI or external services.'
+      }
+    ];
+  }
+
+  if (mentors.length > 0 && goals.length === 0) {
+    return mentors.slice(0, 3).map((mentor) => ({
+      tag: 'Source',
+      title: mentor.name,
+      body: `Saved as a trusted voice: ${mentor.note}`
+    }));
+  }
+
+  if (goals.length > 0 && mentors.length === 0) {
+    return goals.slice(0, 3).map((goal) => ({
+      tag: 'Goal',
+      title: goal.title,
+      body: `Use future trusted inputs to reinforce this direction: ${goal.value}`
+    }));
+  }
+
+  const cardCount = Math.min(4, mentors.length, goals.length);
+  return Array.from({ length: cardCount }, (_, index) => {
+    const mentor = mentors[index];
+    const goal = goals[index];
+
+    return {
+      tag: 'Alignment',
+      title: `${mentor.name} -> ${goal.title}`,
+      body: `Keep this source in view when working on "${goal.title}" because: ${goal.value}`
+    };
+  });
 }
 
 function renderProfilePanel(activeId) {
