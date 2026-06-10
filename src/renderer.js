@@ -172,7 +172,8 @@ const screens = [
 const storageKeys = {
   mentors: 'hyperfocus.profile.mentors',
   goals: 'hyperfocus.profile.goals',
-  insights: 'hyperfocus.profile.insights'
+  insights: 'hyperfocus.profile.insights',
+  todayFocus: 'hyperfocus.profile.todayFocus'
 };
 
 const nav = document.querySelector('#main-nav');
@@ -190,6 +191,14 @@ function readItems(type) {
 
 function saveItems(type, items) {
   localStorage.setItem(storageKeys[type], JSON.stringify(items));
+}
+
+function readTodayFocus() {
+  return localStorage.getItem(storageKeys.todayFocus) || '';
+}
+
+function saveTodayFocus(value) {
+  localStorage.setItem(storageKeys.todayFocus, value);
 }
 
 function createItem(type, item) {
@@ -368,6 +377,8 @@ function renderProfileSummary(activeId) {
         </div>
       </div>
 
+      ${renderTodayFocus()}
+
       ${renderHomeEmptyGuide(mentors, goals)}
 
       <div class="selected-grid">
@@ -411,6 +422,27 @@ function getAlignmentMessage(mentors, goals) {
   }
 
   return 'Add a few trusted sources and goals to turn this Home screen into a simple local focus dashboard.';
+}
+
+function renderTodayFocus() {
+  const todayFocus = readTodayFocus();
+
+  return `
+    <form class="today-focus" data-today-focus-form>
+      <div>
+        <p class="eyebrow">Today's focus</p>
+        <h3>${todayFocus ? escapeHtml(todayFocus) : 'Set one short intention for this session.'}</h3>
+        <p class="profile-intro">Keep the current focus visible while you review your local feed.</p>
+      </div>
+
+      <label class="field">
+        <span>Focus statement</span>
+        <input name="focus" type="text" maxlength="120" value="${escapeHtml(todayFocus)}" placeholder="Example: Protect one deep work block" required />
+      </label>
+
+      <button class="secondary-button" type="submit">${todayFocus ? 'Update focus' : 'Save focus'}</button>
+    </form>
+  `;
 }
 
 function renderHomeEmptyGuide(mentors, goals) {
@@ -880,6 +912,7 @@ screen.addEventListener('submit', (event) => {
   const createForm = event.target.closest('[data-profile-form]');
   const editForm = event.target.closest('[data-edit-form]');
   const insightForm = event.target.closest('[data-insight-form]');
+  const todayFocusForm = event.target.closest('[data-today-focus-form]');
 
   if (createForm) {
     event.preventDefault();
@@ -896,6 +929,12 @@ screen.addEventListener('submit', (event) => {
   if (insightForm) {
     event.preventDefault();
     handleInsightForm(insightForm);
+    return;
+  }
+
+  if (todayFocusForm) {
+    event.preventDefault();
+    handleTodayFocusForm(todayFocusForm);
   }
 });
 
@@ -999,6 +1038,18 @@ function handleInsightForm(form) {
     createdAt: new Date().toISOString()
   });
 
+  renderScreen('focus-feed');
+}
+
+function handleTodayFocusForm(form) {
+  const formData = new FormData(form);
+  const focus = String(formData.get('focus') || '').trim();
+
+  if (!focus) {
+    return;
+  }
+
+  saveTodayFocus(focus);
   renderScreen('focus-feed');
 }
 

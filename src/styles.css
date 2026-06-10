@@ -302,6 +302,7 @@ button {
 .profile-form h3,
 .profile-list h3,
 .alignment-card h3,
+.today-focus h3,
 .selected-list h3,
 .home-empty-guide h3,
 .recent-activity h3,
@@ -316,6 +317,7 @@ button {
 .profile-summary .profile-intro,
 .profile-form .profile-intro,
 .alignment-card .profile-intro,
+.today-focus .profile-intro,
 .home-empty-guide .profile-intro,
 .insight-capture .profile-intro,
 .saved-insights-panel .profile-intro,
@@ -336,6 +338,15 @@ button {
   border: 1px solid rgba(155, 140, 255, 0.22);
   border-radius: 24px;
   background: linear-gradient(135deg, rgba(155, 140, 255, 0.14), rgba(45, 212, 191, 0.07));
+}
+
+.today-focus {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid rgba(155, 140, 255, 0.22);
+  border-radius: 24px;
+  background: rgba(155, 140, 255, 0.08);
 }
 
 .selected-grid {
