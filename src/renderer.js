@@ -910,6 +910,13 @@ function renderAiCoachPanel() {
           <h3>${coachCheckIn ? 'Latest saved reflection' : 'Record one short daily reflection.'}</h3>
           <p class="profile-intro">${coachCheckIn ? escapeHtml(coachCheckIn.text) : 'Write a small note about how your focus is going today. This stays local.'}</p>
           ${coachCheckIn ? `<span>${formatActivityDate(coachCheckIn.createdAt)}</span>` : ''}
+          ${
+            coachCheckIn
+              ? `<div class="profile-actions">
+                  <button class="secondary-button" type="button" data-save-coach-insight>Save as insight</button>
+                </div>`
+              : ''
+          }
         </div>
 
         <label class="field">
@@ -1032,7 +1039,13 @@ screen.addEventListener('click', (event) => {
   const requestClearButton = event.target.closest('[data-request-clear]');
   const cancelClearButton = event.target.closest('[data-cancel-clear]');
   const confirmClearButton = event.target.closest('[data-confirm-clear]');
+  const saveCoachInsightButton = event.target.closest('[data-save-coach-insight]');
   const deleteButton = event.target.closest('[data-delete-item]');
+
+  if (saveCoachInsightButton) {
+    handleSaveCoachInsight();
+    return;
+  }
 
   if (requestClearButton) {
     isClearDataPending = true;
@@ -1152,6 +1165,19 @@ function handleCoachCheckInForm(form) {
   }
 
   saveCoachCheckIn(checkIn);
+  renderScreen('ai-coach');
+}
+
+function handleSaveCoachInsight() {
+  const coachCheckIn = readCoachCheckIn();
+
+  if (!coachCheckIn) {
+    return;
+  }
+
+  createItem('insights', {
+    text: coachCheckIn.text
+  });
   renderScreen('ai-coach');
 }
 
