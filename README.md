@@ -13,6 +13,7 @@ This first pass contains only the app foundation:
 - Placeholder screens for Focus Feed, Mentors / Sources, Goals / Values, Saved Insights, AI Coach, and Settings
 - Local-only manual entry, editing, and deletion for mentors / sources and goals / values
 - Local-only Focus Feed alignment snapshot built from saved mentors and goals
+- Guided Home empty state for a fresh local profile
 - Local-only manual saved-insight capture and deletion from the Focus Feed
 - Local-only Settings reset control for clearing app data
 

@@ -173,6 +173,7 @@ button {
 .profile-item p,
 .empty-state,
 .mini-list span,
+.home-empty-guide p,
 .insight-card p,
 .saved-insight p {
   color: var(--muted);
@@ -301,6 +302,7 @@ button {
 .profile-list h3,
 .alignment-card h3,
 .selected-list h3,
+.home-empty-guide h3,
 .insight-card h3,
 .insight-capture h3,
 .saved-insights-panel h3,
@@ -312,6 +314,7 @@ button {
 .profile-summary .profile-intro,
 .profile-form .profile-intro,
 .alignment-card .profile-intro,
+.home-empty-guide .profile-intro,
 .insight-capture .profile-intro,
 .saved-insights-panel .profile-intro,
 .settings-panel .profile-intro {
@@ -341,6 +344,46 @@ button {
 
 .selected-list {
   min-width: 0;
+}
+
+.home-empty-guide {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid rgba(45, 212, 191, 0.2);
+  border-radius: 24px;
+  background: rgba(45, 212, 191, 0.06);
+}
+
+.guide-steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.guide-steps article {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.guide-steps span {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.84rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #8b7cff, #31d1c3);
+}
+
+.guide-steps p {
+  margin: 0;
 }
 
 .summary-columns {
@@ -626,6 +669,7 @@ button {
   .metric-row,
   .summary-columns,
   .selected-grid,
+  .guide-steps,
   .insight-grid,
   .profile-panel {
     grid-template-columns: 1fr;

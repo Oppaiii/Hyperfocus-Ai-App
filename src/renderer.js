@@ -368,6 +368,8 @@ function renderProfileSummary(activeId) {
         </div>
       </div>
 
+      ${renderHomeEmptyGuide(mentors, goals)}
+
       <div class="selected-grid">
         ${renderSelectedList('Selected mentors / sources', mentors, 'name', 'note', 'Add sources from Mentors / Sources to tune this feed.')}
         ${renderSelectedList('Selected goals / values', goals, 'title', 'value', 'Add goals from Goals / Values to give the feed direction.')}
@@ -407,6 +409,35 @@ function getAlignmentMessage(mentors, goals) {
   }
 
   return 'Add a few trusted sources and goals to turn this Home screen into a simple local focus dashboard.';
+}
+
+function renderHomeEmptyGuide(mentors, goals) {
+  if (mentors.length > 0 || goals.length > 0) {
+    return '';
+  }
+
+  return `
+    <section class="home-empty-guide" aria-label="Fresh start guide">
+      <div>
+        <p class="eyebrow">Start here</p>
+        <h3>Add one trusted source and one goal.</h3>
+        <p class="profile-intro">A source gives the feed a voice to listen for. A goal gives it a direction to protect.</p>
+      </div>
+
+      <div class="guide-steps">
+        <article>
+          <span>1</span>
+          <strong>Add a mentor or source</strong>
+          <p>Choose someone whose judgment helps you stay focused.</p>
+        </article>
+        <article>
+          <span>2</span>
+          <strong>Add a goal or value</strong>
+          <p>Name what your attention should support first.</p>
+        </article>
+      </div>
+    </section>
+  `;
 }
 
 function renderSelectedList(title, items, titleKey, bodyKey, emptyText) {
