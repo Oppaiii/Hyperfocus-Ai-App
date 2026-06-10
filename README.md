@@ -13,10 +13,11 @@ This first pass contains only the app foundation:
 - Placeholder screens for Focus Feed, Mentors / Sources, Goals / Values, Saved Insights, AI Coach, and Settings
 - Local-only manual entry, editing, and deletion for mentors / sources and goals / values
 - Local-only Focus Feed alignment snapshot built from saved mentors and goals
+- Local-only manual saved-insight capture from the Focus Feed
 
 No AI logic or external content source integrations are implemented yet.
 
-Saved mentors and goals are stored in the app's local browser storage for now. The Focus Feed snapshot is generated from that local data only. There is no syncing, search, analytics, AI processing, or external API connection.
+Saved mentors, goals, and insights are stored in the app's local browser storage for now. The Focus Feed snapshot is generated from that local data only. There is no syncing, search, analytics, AI processing, or external API connection.
 
 ## Run locally
 

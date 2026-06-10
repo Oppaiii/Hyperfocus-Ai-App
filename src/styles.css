@@ -173,7 +173,8 @@ button {
 .profile-item p,
 .empty-state,
 .mini-list span,
-.insight-card p {
+.insight-card p,
+.saved-insight p {
   color: var(--muted);
   line-height: 1.6;
 }
@@ -283,7 +284,8 @@ button {
 
 .profile-summary,
 .profile-panel,
-.focus-dashboard {
+.focus-dashboard,
+.saved-insights-panel {
   border: 1px solid var(--line);
   border-radius: 28px;
   background: rgba(255, 255, 255, 0.055);
@@ -298,14 +300,18 @@ button {
 .profile-list h3,
 .alignment-card h3,
 .selected-list h3,
-.insight-card h3 {
+.insight-card h3,
+.insight-capture h3,
+.saved-insights-panel h3 {
   margin: 0;
   letter-spacing: -0.03em;
 }
 
 .profile-summary .profile-intro,
 .profile-form .profile-intro,
-.alignment-card .profile-intro {
+.alignment-card .profile-intro,
+.insight-capture .profile-intro,
+.saved-insights-panel .profile-intro {
   margin: 10px 0 0;
 }
 
@@ -391,6 +397,47 @@ button {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   background: rgba(155, 140, 255, 0.08);
+}
+
+.insight-capture {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.saved-insights-panel {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+}
+
+.saved-insight-list {
+  display: grid;
+  gap: 12px;
+}
+
+.saved-insight {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.saved-insight p {
+  margin: 0;
+}
+
+.saved-insight span {
+  display: block;
+  margin-top: 12px;
+  color: var(--accent-strong);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .profile-panel {

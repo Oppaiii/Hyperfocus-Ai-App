@@ -171,7 +171,8 @@ const screens = [
 
 const storageKeys = {
   mentors: 'hyperfocus.profile.mentors',
-  goals: 'hyperfocus.profile.goals'
+  goals: 'hyperfocus.profile.goals',
+  insights: 'hyperfocus.profile.insights'
 };
 
 const nav = document.querySelector('#main-nav');
@@ -241,12 +242,13 @@ function getInitialScreenId() {
 function getMetrics(activeScreen) {
   const mentors = readItems('mentors');
   const goals = readItems('goals');
+  const insights = readItems('insights');
 
   if (activeScreen.id === 'focus-feed') {
     return [
       [String(mentors.length), 'Saved sources'],
       [String(goals.length), 'Saved goals'],
-      ['Local', 'Profile mode']
+      [String(insights.length), 'Saved insights']
     ];
   }
 
@@ -263,6 +265,14 @@ function getMetrics(activeScreen) {
       [String(goals.length), 'Saved goals'],
       ['Values', 'First filter'],
       ['Local', 'Private by default']
+    ];
+  }
+
+  if (activeScreen.id === 'saved-insights') {
+    return [
+      [String(insights.length), 'Saved insights'],
+      ['Manual', 'Capture mode'],
+      ['Local', 'Storage mode']
     ];
   }
 
@@ -362,6 +372,8 @@ function renderProfileSummary(activeId) {
           ${renderInsightCards(mentors, goals)}
         </div>
       </div>
+
+      ${renderInsightCaptureForm()}
     </section>
   `;
 }
@@ -480,6 +492,25 @@ function buildInsightCards(mentors, goals) {
   });
 }
 
+function renderInsightCaptureForm() {
+  return `
+    <form class="insight-capture" data-insight-form>
+      <div>
+        <p class="eyebrow">Save a takeaway</p>
+        <h3>Capture a short reflection from this focus snapshot.</h3>
+        <p class="profile-intro">Saved insights stay local and appear in the Saved Insights screen.</p>
+      </div>
+
+      <label class="field">
+        <span>Insight or note</span>
+        <textarea name="text" maxlength="240" rows="3" placeholder="What do you want to remember or act on?" required></textarea>
+      </label>
+
+      <button class="primary-button" type="submit">Save insight</button>
+    </form>
+  `;
+}
+
 function renderProfilePanel(activeId) {
   if (activeId === 'mentors') {
     return renderMentorPanel();
@@ -487,6 +518,10 @@ function renderProfilePanel(activeId) {
 
   if (activeId === 'goals') {
     return renderGoalPanel();
+  }
+
+  if (activeId === 'saved-insights') {
+    return renderSavedInsightsPanel();
   }
 
   return '';
@@ -604,6 +639,49 @@ function renderItemList({ title, emptyText, items, type, titleKey, bodyKey, titl
   `;
 }
 
+function renderSavedInsightsPanel() {
+  const insights = readItems('insights');
+
+  return `
+    <section class="saved-insights-panel" aria-labelledby="saved-insights-title">
+      <div>
+        <p class="eyebrow">Local notes</p>
+        <h3 id="saved-insights-title">Saved insights</h3>
+        <p class="profile-intro">Short reflections captured from the Focus Feed. These are read-only for now.</p>
+      </div>
+
+      ${
+        insights.length === 0
+          ? '<p class="empty-state">No saved insights yet. Capture one from the Focus Feed when something feels worth remembering.</p>'
+          : `<div class="saved-insight-list">
+              ${insights
+                .map(
+                  (insight) => `
+                    <article class="saved-insight">
+                      <p>${escapeHtml(insight.text)}</p>
+                      <span>${formatInsightDate(insight.createdAt)}</span>
+                    </article>
+                  `
+                )
+                .join('')}
+            </div>`
+      }
+    </section>
+  `;
+}
+
+function formatInsightDate(value) {
+  if (!value) {
+    return 'Saved locally';
+  }
+
+  return `Saved ${new Date(value).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  })}`;
+}
+
 function setActiveScreen(screenId) {
   renderNav(screenId);
   renderScreen(screenId);
@@ -624,6 +702,7 @@ nav.addEventListener('click', (event) => {
 screen.addEventListener('submit', (event) => {
   const createForm = event.target.closest('[data-profile-form]');
   const editForm = event.target.closest('[data-edit-form]');
+  const insightForm = event.target.closest('[data-insight-form]');
 
   if (createForm) {
     event.preventDefault();
@@ -634,6 +713,12 @@ screen.addEventListener('submit', (event) => {
   if (editForm) {
     event.preventDefault();
     handleEditForm(editForm);
+    return;
+  }
+
+  if (insightForm) {
+    event.preventDefault();
+    handleInsightForm(insightForm);
   }
 });
 
@@ -700,6 +785,22 @@ function handleEditForm(form) {
       renderProfileType(type);
     }
   }
+}
+
+function handleInsightForm(form) {
+  const formData = new FormData(form);
+  const text = String(formData.get('text') || '').trim();
+
+  if (!text) {
+    return;
+  }
+
+  createItem('insights', {
+    text,
+    createdAt: new Date().toISOString()
+  });
+
+  renderScreen('focus-feed');
 }
 
 function renderProfileType(type) {
