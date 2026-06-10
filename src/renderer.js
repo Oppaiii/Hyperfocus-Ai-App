@@ -169,12 +169,88 @@ const screens = [
   }
 ];
 
+const storageKeys = {
+  mentors: 'hyperfocus.profile.mentors',
+  goals: 'hyperfocus.profile.goals'
+};
+
 const nav = document.querySelector('#main-nav');
 const screen = document.querySelector('#screen');
+
+function readItems(type) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKeys[type]) || '[]');
+    return Array.isArray(saved) ? saved : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveItems(type, items) {
+  localStorage.setItem(storageKeys[type], JSON.stringify(items));
+}
+
+function createItem(type, item) {
+  const items = readItems(type);
+  saveItems(type, [{ id: createId(), ...item }, ...items]);
+}
+
+function createId() {
+  if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+    return window.crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => {
+    const entities = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    };
+
+    return entities[character];
+  });
+}
 
 function getInitialScreenId() {
   const hashId = window.location.hash.replace('#', '');
   return screens.some((item) => item.id === hashId) ? hashId : screens[0].id;
+}
+
+function getMetrics(activeScreen) {
+  const mentors = readItems('mentors');
+  const goals = readItems('goals');
+
+  if (activeScreen.id === 'focus-feed') {
+    return [
+      [String(mentors.length), 'Saved sources'],
+      [String(goals.length), 'Saved goals'],
+      ['Local', 'Profile mode']
+    ];
+  }
+
+  if (activeScreen.id === 'mentors') {
+    return [
+      [String(mentors.length), 'Saved sources'],
+      ['Manual', 'Curation style'],
+      ['Local', 'Storage mode']
+    ];
+  }
+
+  if (activeScreen.id === 'goals') {
+    return [
+      [String(goals.length), 'Saved goals'],
+      ['Values', 'First filter'],
+      ['Local', 'Private by default']
+    ];
+  }
+
+  return activeScreen.metrics;
 }
 
 function renderNav(activeId) {
@@ -192,6 +268,7 @@ function renderNav(activeId) {
 
 function renderScreen(activeId) {
   const activeScreen = screens.find((item) => item.id === activeId) || screens[0];
+  const metrics = getMetrics(activeScreen);
 
   screen.innerHTML = `
     <section class="screen" aria-labelledby="${activeScreen.id}-title">
@@ -208,7 +285,7 @@ function renderScreen(activeId) {
       </div>
 
       <div class="metric-row" aria-label="Screen summary">
-        ${activeScreen.metrics
+        ${metrics
           .map(
             ([value, label]) => `
               <div class="metric">
@@ -219,6 +296,8 @@ function renderScreen(activeId) {
           )
           .join('')}
       </div>
+
+      ${renderProfileSummary(activeScreen.id)}
 
       <div class="card-grid">
         ${activeScreen.cards
@@ -232,7 +311,170 @@ function renderScreen(activeId) {
           )
           .join('')}
       </div>
+
+      ${renderProfilePanel(activeScreen.id)}
     </section>
+  `;
+}
+
+function renderProfileSummary(activeId) {
+  if (activeId !== 'focus-feed') {
+    return '';
+  }
+
+  const mentors = readItems('mentors');
+  const goals = readItems('goals');
+
+  if (mentors.length === 0 && goals.length === 0) {
+    return `
+      <section class="profile-summary" aria-label="Focus profile summary">
+        <p class="eyebrow">Focus profile</p>
+        <h3>Add your first trusted source and goal to start shaping the feed.</h3>
+        <p class="profile-intro">Use Mentors / Sources and Goals / Values to build a small local profile. Nothing leaves this app.</p>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="profile-summary" aria-label="Focus profile summary">
+      <p class="eyebrow">Focus profile</p>
+      <div class="summary-columns">
+        ${renderMiniList('Trusted sources', mentors, 'name', 'note')}
+        ${renderMiniList('Goals and values', goals, 'title', 'value')}
+      </div>
+    </section>
+  `;
+}
+
+function renderMiniList(title, items, titleKey, bodyKey) {
+  const preview = items.slice(0, 3);
+
+  return `
+    <div>
+      <h3>${title}</h3>
+      ${
+        preview.length === 0
+          ? '<p class="profile-intro">Nothing added yet.</p>'
+          : `<ul class="mini-list">
+              ${preview
+                .map(
+                  (item) => `
+                    <li>
+                      <strong>${escapeHtml(item[titleKey])}</strong>
+                      <span>${escapeHtml(item[bodyKey])}</span>
+                    </li>
+                  `
+                )
+                .join('')}
+            </ul>`
+      }
+    </div>
+  `;
+}
+
+function renderProfilePanel(activeId) {
+  if (activeId === 'mentors') {
+    return renderMentorPanel();
+  }
+
+  if (activeId === 'goals') {
+    return renderGoalPanel();
+  }
+
+  return '';
+}
+
+function renderMentorPanel() {
+  const mentors = readItems('mentors');
+
+  return `
+    <section class="profile-panel" aria-labelledby="mentor-form-title">
+      <form class="profile-form" data-profile-form="mentors">
+        <div>
+          <p class="eyebrow">Manual source</p>
+          <h3 id="mentor-form-title">Add a mentor or source</h3>
+          <p class="profile-intro">Start with a few people whose judgment helps you stay aligned.</p>
+        </div>
+
+        <label class="field">
+          <span>Name</span>
+          <input name="name" type="text" maxlength="80" placeholder="Example: Cal Newport" required />
+        </label>
+
+        <label class="field">
+          <span>Why they matter</span>
+          <textarea name="note" maxlength="180" rows="3" placeholder="What do they help you remember or practice?" required></textarea>
+        </label>
+
+        <button class="primary-button" type="submit">Add source</button>
+      </form>
+
+      ${renderItemList({
+        title: 'Saved mentors and sources',
+        emptyText: 'No trusted sources saved yet.',
+        items: mentors,
+        titleKey: 'name',
+        bodyKey: 'note'
+      })}
+    </section>
+  `;
+}
+
+function renderGoalPanel() {
+  const goals = readItems('goals');
+
+  return `
+    <section class="profile-panel" aria-labelledby="goal-form-title">
+      <form class="profile-form" data-profile-form="goals">
+        <div>
+          <p class="eyebrow">Personal direction</p>
+          <h3 id="goal-form-title">Add a goal or value</h3>
+          <p class="profile-intro">Capture the outcomes and principles your inputs should support.</p>
+        </div>
+
+        <label class="field">
+          <span>Goal or value</span>
+          <input name="title" type="text" maxlength="90" placeholder="Example: Protect deep work" required />
+        </label>
+
+        <label class="field">
+          <span>What it means</span>
+          <textarea name="value" maxlength="180" rows="3" placeholder="How should this shape your attention?" required></textarea>
+        </label>
+
+        <button class="primary-button" type="submit">Add goal</button>
+      </form>
+
+      ${renderItemList({
+        title: 'Saved goals and values',
+        emptyText: 'No goals or values saved yet.',
+        items: goals,
+        titleKey: 'title',
+        bodyKey: 'value'
+      })}
+    </section>
+  `;
+}
+
+function renderItemList({ title, emptyText, items, titleKey, bodyKey }) {
+  return `
+    <div class="profile-list" aria-live="polite">
+      <h3>${title}</h3>
+      ${
+        items.length === 0
+          ? `<p class="empty-state">${emptyText}</p>`
+          : items
+              .map(
+                (item) => `
+                  <article class="profile-item">
+                    <strong>${escapeHtml(item[titleKey])}</strong>
+                    <p>${escapeHtml(item[bodyKey])}</p>
+                  </article>
+                `
+              )
+              .join('')
+      }
+    </div>
   `;
 }
 
@@ -251,6 +493,39 @@ nav.addEventListener('click', (event) => {
   }
 
   setActiveScreen(selected.dataset.screen);
+});
+
+screen.addEventListener('submit', (event) => {
+  const form = event.target.closest('[data-profile-form]');
+
+  if (!form) {
+    return;
+  }
+
+  event.preventDefault();
+
+  const formData = new FormData(form);
+  const type = form.dataset.profileForm;
+
+  if (type === 'mentors') {
+    const name = String(formData.get('name') || '').trim();
+    const note = String(formData.get('note') || '').trim();
+
+    if (name && note) {
+      createItem('mentors', { name, note });
+      renderScreen('mentors');
+    }
+  }
+
+  if (type === 'goals') {
+    const title = String(formData.get('title') || '').trim();
+    const value = String(formData.get('value') || '').trim();
+
+    if (title && value) {
+      createItem('goals', { title, value });
+      renderScreen('goals');
+    }
+  }
 });
 
 window.addEventListener('hashchange', () => {
