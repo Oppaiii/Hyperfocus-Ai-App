@@ -9,6 +9,22 @@
     };
   }
 
+  function getProviderStatus() {
+    const config =
+      globalScope.AiProviderConfig && typeof globalScope.AiProviderConfig.getConfig === 'function'
+        ? globalScope.AiProviderConfig.getConfig()
+        : {
+            liveProviderEnabled: false,
+            activeProvider: MOCK_PROVIDER_NAME
+          };
+
+    return {
+      liveProviderEnabled: Boolean(config.liveProviderEnabled),
+      activeProvider: config.activeProvider || MOCK_PROVIDER_NAME,
+      currentMode: config.liveProviderEnabled ? 'live-provider' : 'local-mock'
+    };
+  }
+
   function generateCoachReply(prompt) {
     const context = prompt && prompt.userContext ? prompt.userContext : {};
     const todayFocus = normalizeText(context.todayFocus, 'your current focus');
@@ -46,6 +62,7 @@
   }
 
   globalScope.AiProvider = {
-    createMockCoachProvider
+    createMockCoachProvider,
+    getProviderStatus
   };
 })(globalThis);

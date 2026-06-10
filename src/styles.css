@@ -317,6 +317,7 @@ button {
 .saved-insights-panel h3,
 .settings-panel h3,
 .settings-row h3,
+.settings-config h3,
 .settings-checklist h3 {
   margin: 0;
   letter-spacing: -0.03em;
@@ -334,7 +335,8 @@ button {
 .insight-capture .profile-intro,
 .saved-insights-panel .profile-intro,
 .settings-panel .profile-intro,
-.settings-row .profile-intro {
+.settings-row .profile-intro,
+.settings-config .profile-intro {
   margin: 10px 0 0;
 }
 
@@ -704,6 +706,43 @@ button {
   border: 1px solid var(--line);
   border-radius: 20px;
   background: rgba(0, 0, 0, 0.14);
+}
+
+.settings-config {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.settings-config dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.settings-config dl > div {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.5fr) minmax(0, 1fr);
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.settings-config dt,
+.settings-config dd {
+  margin: 0;
+}
+
+.settings-config dt {
+  color: var(--muted);
+}
+
+.settings-config dd {
+  color: var(--soft);
+  font-weight: 700;
 }
 
 .settings-checklist {

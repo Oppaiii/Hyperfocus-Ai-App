@@ -1025,6 +1025,8 @@ function renderSettingsPanel() {
   const goals = readItems('goals');
   const insights = readItems('insights');
   const totalItems = mentors.length + goals.length + insights.length;
+  const aiProviderConfig = getAiProviderConfig();
+  const aiProviderStatus = getAiProviderStatus();
 
   return `
     <section class="settings-panel" aria-labelledby="local-data-title">
@@ -1035,6 +1037,44 @@ function renderSettingsPanel() {
           <p class="profile-intro">Not connected yet. The app is still using the local mock provider only.</p>
         </div>
         <button class="secondary-button disabled-button" type="button" disabled>Coming later</button>
+      </div>
+
+      <div class="settings-config" aria-label="Future AI provider configuration">
+        <div>
+          <p class="eyebrow">Future configuration</p>
+          <h3>AI provider settings</h3>
+          <p class="profile-intro">${escapeHtml(aiProviderConfig.safetyNote)}</p>
+        </div>
+        <dl>
+          <div>
+            <dt>Live provider</dt>
+            <dd>${aiProviderConfig.liveProviderEnabled ? 'Enabled' : 'Disabled'}</dd>
+          </div>
+          <div>
+            <dt>Current mode</dt>
+            <dd>${escapeHtml(aiProviderStatus.currentMode)}</dd>
+          </div>
+          <div>
+            <dt>Active provider</dt>
+            <dd>${escapeHtml(aiProviderStatus.activeProvider)}</dd>
+          </div>
+          <div>
+            <dt>Future provider</dt>
+            <dd>${escapeHtml(aiProviderConfig.futureProvider.providerName)}</dd>
+          </div>
+          <div>
+            <dt>API key storage</dt>
+            <dd>${escapeHtml(aiProviderConfig.futureProvider.apiKeyStorage)}</dd>
+          </div>
+          <div>
+            <dt>Model</dt>
+            <dd>${escapeHtml(aiProviderConfig.futureProvider.model)}</dd>
+          </div>
+          <div>
+            <dt>Endpoint</dt>
+            <dd>${escapeHtml(aiProviderConfig.futureProvider.endpoint)}</dd>
+          </div>
+        </dl>
       </div>
 
       <div class="settings-checklist" aria-label="AI provider readiness checklist">
@@ -1074,6 +1114,36 @@ function renderSettingsPanel() {
       }
     </section>
   `;
+}
+
+function getAiProviderConfig() {
+  if (window.AiProviderConfig && typeof window.AiProviderConfig.getConfig === 'function') {
+    return window.AiProviderConfig.getConfig();
+  }
+
+  return {
+    liveProviderEnabled: false,
+    activeProvider: 'local-mock-coach',
+    futureProvider: {
+      providerName: 'Not selected',
+      apiKeyStorage: 'Not configured',
+      model: 'Not selected',
+      endpoint: 'Not configured'
+    },
+    safetyNote: 'AI provider settings are not available in this local build.'
+  };
+}
+
+function getAiProviderStatus() {
+  if (window.AiProvider && typeof window.AiProvider.getProviderStatus === 'function') {
+    return window.AiProvider.getProviderStatus();
+  }
+
+  return {
+    liveProviderEnabled: false,
+    activeProvider: 'local-mock-coach',
+    currentMode: 'local-mock'
+  };
 }
 
 function setActiveScreen(screenId) {
