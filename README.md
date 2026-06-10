@@ -33,3 +33,9 @@ Saved mentors, goals, and insights are stored in the app's local browser storage
 npm install
 npm start
 ```
+
+## Verify
+
+```bash
+npm test
+```
