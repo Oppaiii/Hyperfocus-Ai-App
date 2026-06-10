@@ -17,6 +17,7 @@ This first pass contains only the app foundation:
 - Local-only Today's focus field on Home
 - Local-only Recent activity section for latest additions
 - Local-only manual saved-insight capture and deletion from the Focus Feed
+- Local-only AI Coach screen skeleton for future coaching logic
 - Local-only Settings reset control for clearing app data
 
 No AI logic or external content source integrations are implemented yet.

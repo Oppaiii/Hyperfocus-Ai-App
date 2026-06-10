@@ -687,6 +687,10 @@ function renderProfilePanel(activeId) {
     return renderSavedInsightsPanel();
   }
 
+  if (activeId === 'ai-coach') {
+    return renderAiCoachPanel();
+  }
+
   if (activeId === 'settings') {
     return renderSettingsPanel();
   }
@@ -836,6 +840,48 @@ function renderSavedInsightsPanel() {
                 .join('')}
             </div>`
       }
+    </section>
+  `;
+}
+
+function renderAiCoachPanel() {
+  const todayFocus = readTodayFocus();
+  const goals = readItems('goals');
+  const recentGoal = goals[0];
+
+  return `
+    <section class="coach-panel" aria-labelledby="coach-check-in-title">
+      <div class="coach-intro">
+        <p class="eyebrow">Local coach shell</p>
+        <h3 id="coach-check-in-title">A calm accountability check-in.</h3>
+        <p class="profile-intro">This is a wellness and focus companion placeholder, not therapy or medical guidance. No AI is running yet.</p>
+      </div>
+
+      <div class="coach-grid">
+        <article class="coach-card">
+          <span class="insight-tag">Focus review</span>
+          <h3>${todayFocus ? escapeHtml(todayFocus) : 'No focus set yet.'}</h3>
+          <p>${todayFocus ? 'Use this as the anchor for your next block of attention.' : "Set Today's focus on Home so the future coach has a clear starting point."}</p>
+        </article>
+
+        <article class="coach-card">
+          <span class="insight-tag">Reflection</span>
+          <h3>What would make this easier to start?</h3>
+          <p>Notice one small friction point, then lower the effort needed to begin.</p>
+        </article>
+
+        <article class="coach-card">
+          <span class="insight-tag">Next action</span>
+          <h3>${recentGoal ? `Take one step toward ${escapeHtml(recentGoal.title)}.` : 'Choose one small visible next step.'}</h3>
+          <p>${recentGoal ? escapeHtml(recentGoal.value) : 'Keep it concrete enough to finish or make progress in a short session.'}</p>
+        </article>
+
+        <article class="coach-card encouragement-card">
+          <span class="insight-tag">Encouragement</span>
+          <h3>Progress can stay small and still count.</h3>
+          <p>Protecting attention once today is a useful signal. The real coach can build from these local patterns later.</p>
+        </article>
+      </div>
     </section>
   `;
 }
