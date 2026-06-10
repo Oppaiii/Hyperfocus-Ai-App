@@ -36,19 +36,22 @@ const prompt = CoachPromptBuilder.buildCoachPrompt({
 
 assert.equal(prompt.role, 'local-ai-coach-preview');
 assert.equal(prompt.userContext.todayFocus, 'Protect one deep work block');
-assert.deepEqual(prompt.userContext.selectedGoals, [
+assert.deepEqual(JSON.parse(JSON.stringify(prompt.userContext.selectedGoals)), [
   {
     title: 'Deep work',
     value: 'Make focused work the first priority'
   }
 ]);
 assert.equal(prompt.userContext.latestCoachReflection, 'I made progress after removing one distraction.');
-assert.deepEqual(prompt.userContext.recentSavedInsights, [
+assert.deepEqual(JSON.parse(JSON.stringify(prompt.userContext.recentSavedInsights)), [
   {
     text: 'Start with the smallest next action.'
   }
 ]);
-assert.deepEqual(prompt.coachRules, ['Keep the response short.', 'Use only local context.']);
+assert.deepEqual(JSON.parse(JSON.stringify(prompt.coachRules)), [
+  'Keep the response short.',
+  'Use only local context.'
+]);
 assert.equal(prompt.requestedResponse.format, 'short_check_in');
 assert.match(prompt.previewText, /Protect one deep work block/);
 assert.match(prompt.previewText, /Deep work: Make focused work the first priority/);
