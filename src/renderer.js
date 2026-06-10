@@ -1077,6 +1077,12 @@ function renderSettingsPanel() {
         </dl>
       </div>
 
+      <div class="consent-note" aria-label="Future AI consent note">
+        <p class="eyebrow">Safety and consent</p>
+        <h3>External AI will require explicit approval.</h3>
+        <p>Before any future live AI request is made, the user must enable the provider and approve which local data can be sent. Until then, all coaching stays on this device.</p>
+      </div>
+
       <div class="settings-checklist" aria-label="AI provider readiness checklist">
         <p class="eyebrow">Readiness checklist</p>
         <h3>Prepared for a future provider</h3>

@@ -24,6 +24,7 @@ This first pass contains only the app foundation:
 - Local-only AI provider boundary with a deterministic mock reply
 - Local-only future AI provider configuration area
 - Disabled Settings placeholder for a future real AI provider connection
+- Read-only Settings safety and consent note for future live AI use
 - Read-only Settings checklist for AI provider readiness
 - Local-only Settings reset control for clearing app data
 
