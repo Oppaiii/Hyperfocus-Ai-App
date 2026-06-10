@@ -14,6 +14,7 @@
     const todayFocus = normalizeText(context.todayFocus, 'your current focus');
     const reflection = normalizeText(context.latestCoachReflection, 'No reflection has been saved yet.');
     const nextGoal = getFirstGoal(context.selectedGoals);
+    const coachRules = Array.isArray(prompt && prompt.coachRules) ? prompt.coachRules : [];
 
     return {
       provider: MOCK_PROVIDER_NAME,
@@ -24,7 +25,14 @@
         `Next small action: ${nextGoal ? `take one visible step toward "${nextGoal.title}"` : 'choose one concrete next step you can start now'}.`,
         'Encouragement: small, honest progress is enough for this check-in.'
       ].join('\n'),
-      usedPromptRole: prompt && prompt.role ? prompt.role : 'unknown'
+      usedPromptRole: prompt && prompt.role ? prompt.role : 'unknown',
+      usedContext: {
+        todayFocus,
+        selectedGoals: Array.isArray(context.selectedGoals) ? context.selectedGoals : [],
+        latestCoachReflection: reflection,
+        recentSavedInsights: Array.isArray(context.recentSavedInsights) ? context.recentSavedInsights : [],
+        coachRules
+      }
     };
   }
 

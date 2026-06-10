@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron .",
     "check": "node --check src/main.js && node --check src/coachPrompt.js && node --check src/aiProvider.js && node --check src/renderer.js",
-    "test": "npm run check && node test/coachPrompt.test.js"
+    "test": "npm run check && node test/coachPrompt.test.js && node test/aiProvider.test.js"
   },
   "repository": {
     "type": "git",
