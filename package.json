@@ -1,0 +1,26 @@
+{
+  "name": "hyperfocus-ai-app",
+  "version": "1.0.0",
+  "description": "A private desktop app concept for curated influence, goal focus, and future AI coaching.",
+  "private": true,
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "check": "node --check src/main.js && node --check src/renderer.js",
+    "test": "npm run check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Oppaiii/Hyperfocus-Ai-App.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Oppaiii/Hyperfocus-Ai-App/issues"
+  },
+  "homepage": "https://github.com/Oppaiii/Hyperfocus-Ai-App#readme",
+  "devDependencies": {
+    "electron": "^42.4.0"
+  }
+}
