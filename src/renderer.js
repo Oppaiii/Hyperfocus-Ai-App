@@ -173,7 +173,8 @@ const storageKeys = {
   mentors: 'hyperfocus.profile.mentors',
   goals: 'hyperfocus.profile.goals',
   insights: 'hyperfocus.profile.insights',
-  todayFocus: 'hyperfocus.profile.todayFocus'
+  todayFocus: 'hyperfocus.profile.todayFocus',
+  coachCheckIn: 'hyperfocus.profile.coachCheckIn'
 };
 
 const nav = document.querySelector('#main-nav');
@@ -199,6 +200,25 @@ function readTodayFocus() {
 
 function saveTodayFocus(value) {
   localStorage.setItem(storageKeys.todayFocus, value);
+}
+
+function readCoachCheckIn() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKeys.coachCheckIn) || 'null');
+    return saved && typeof saved.text === 'string' ? saved : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveCoachCheckIn(text) {
+  localStorage.setItem(
+    storageKeys.coachCheckIn,
+    JSON.stringify({
+      text,
+      createdAt: new Date().toISOString()
+    })
+  );
 }
 
 function createItem(type, item) {
@@ -848,6 +868,7 @@ function renderAiCoachPanel() {
   const todayFocus = readTodayFocus();
   const goals = readItems('goals');
   const recentGoal = goals[0];
+  const coachCheckIn = readCoachCheckIn();
 
   return `
     <section class="coach-panel" aria-labelledby="coach-check-in-title">
@@ -882,6 +903,22 @@ function renderAiCoachPanel() {
           <p>Protecting attention once today is a useful signal. The real coach can build from these local patterns later.</p>
         </article>
       </div>
+
+      <form class="coach-check-in" data-coach-check-in-form>
+        <div>
+          <p class="eyebrow">Manual check-in</p>
+          <h3>${coachCheckIn ? 'Latest saved reflection' : 'Record one short daily reflection.'}</h3>
+          <p class="profile-intro">${coachCheckIn ? escapeHtml(coachCheckIn.text) : 'Write a small note about how your focus is going today. This stays local.'}</p>
+          ${coachCheckIn ? `<span>${formatActivityDate(coachCheckIn.createdAt)}</span>` : ''}
+        </div>
+
+        <label class="field">
+          <span>Check-in note</span>
+          <textarea name="checkIn" maxlength="240" rows="3" placeholder="Example: I protected one focused block and need a smaller next step." required></textarea>
+        </label>
+
+        <button class="secondary-button" type="submit">${coachCheckIn ? 'Replace check-in' : 'Save check-in'}</button>
+      </form>
     </section>
   `;
 }
@@ -959,6 +996,7 @@ screen.addEventListener('submit', (event) => {
   const editForm = event.target.closest('[data-edit-form]');
   const insightForm = event.target.closest('[data-insight-form]');
   const todayFocusForm = event.target.closest('[data-today-focus-form]');
+  const coachCheckInForm = event.target.closest('[data-coach-check-in-form]');
 
   if (createForm) {
     event.preventDefault();
@@ -981,6 +1019,12 @@ screen.addEventListener('submit', (event) => {
   if (todayFocusForm) {
     event.preventDefault();
     handleTodayFocusForm(todayFocusForm);
+    return;
+  }
+
+  if (coachCheckInForm) {
+    event.preventDefault();
+    handleCoachCheckInForm(coachCheckInForm);
   }
 });
 
@@ -1097,6 +1141,18 @@ function handleTodayFocusForm(form) {
 
   saveTodayFocus(focus);
   renderScreen('focus-feed');
+}
+
+function handleCoachCheckInForm(form) {
+  const formData = new FormData(form);
+  const checkIn = String(formData.get('checkIn') || '').trim();
+
+  if (!checkIn) {
+    return;
+  }
+
+  saveCoachCheckIn(checkIn);
+  renderScreen('ai-coach');
 }
 
 function renderProfileType(type) {
