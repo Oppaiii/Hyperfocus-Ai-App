@@ -11,7 +11,7 @@ This first pass contains only the app foundation:
 - Electron app shell
 - Dark, modern main navigation
 - Placeholder screens for Focus Feed, Mentors / Sources, Goals / Values, Saved Insights, AI Coach, and Settings
-- Local-only manual entry for mentors / sources and goals / values
+- Local-only manual entry, editing, and deletion for mentors / sources and goals / values
 
 No AI logic or external content source integrations are implemented yet.
 

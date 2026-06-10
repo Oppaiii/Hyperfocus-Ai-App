@@ -195,6 +195,22 @@ function createItem(type, item) {
   saveItems(type, [{ id: createId(), ...item }, ...items]);
 }
 
+function updateItem(type, id, itemUpdate) {
+  const items = readItems(type);
+  saveItems(
+    type,
+    items.map((item) => (item.id === id ? { ...item, ...itemUpdate } : item))
+  );
+}
+
+function deleteItem(type, id) {
+  const items = readItems(type);
+  saveItems(
+    type,
+    items.filter((item) => item.id !== id)
+  );
+}
+
 function createId() {
   if (window.crypto && typeof window.crypto.randomUUID === 'function') {
     return window.crypto.randomUUID();
@@ -413,8 +429,11 @@ function renderMentorPanel() {
         title: 'Saved mentors and sources',
         emptyText: 'No trusted sources saved yet.',
         items: mentors,
+        type: 'mentors',
         titleKey: 'name',
-        bodyKey: 'note'
+        bodyKey: 'note',
+        titleLabel: 'Name',
+        bodyLabel: 'Why they matter'
       })}
     </section>
   `;
@@ -449,14 +468,17 @@ function renderGoalPanel() {
         title: 'Saved goals and values',
         emptyText: 'No goals or values saved yet.',
         items: goals,
+        type: 'goals',
         titleKey: 'title',
-        bodyKey: 'value'
+        bodyKey: 'value',
+        titleLabel: 'Goal or value',
+        bodyLabel: 'What it means'
       })}
     </section>
   `;
 }
 
-function renderItemList({ title, emptyText, items, titleKey, bodyKey }) {
+function renderItemList({ title, emptyText, items, type, titleKey, bodyKey, titleLabel, bodyLabel }) {
   return `
     <div class="profile-list" aria-live="polite">
       <h3>${title}</h3>
@@ -466,10 +488,22 @@ function renderItemList({ title, emptyText, items, titleKey, bodyKey }) {
           : items
               .map(
                 (item) => `
-                  <article class="profile-item">
-                    <strong>${escapeHtml(item[titleKey])}</strong>
-                    <p>${escapeHtml(item[bodyKey])}</p>
-                  </article>
+                  <form class="profile-item edit-form" data-edit-form="${type}" data-item-id="${escapeHtml(item.id)}">
+                    <label class="field compact-field">
+                      <span>${titleLabel}</span>
+                      <input name="${titleKey}" type="text" maxlength="90" value="${escapeHtml(item[titleKey])}" required />
+                    </label>
+
+                    <label class="field compact-field">
+                      <span>${bodyLabel}</span>
+                      <textarea name="${bodyKey}" maxlength="180" rows="3" required>${escapeHtml(item[bodyKey])}</textarea>
+                    </label>
+
+                    <div class="profile-actions">
+                      <button class="secondary-button" type="submit">Save</button>
+                      <button class="danger-button" type="button" data-delete-item="${type}" data-item-id="${escapeHtml(item.id)}">Delete</button>
+                    </div>
+                  </form>
                 `
               )
               .join('')
@@ -496,14 +530,36 @@ nav.addEventListener('click', (event) => {
 });
 
 screen.addEventListener('submit', (event) => {
-  const form = event.target.closest('[data-profile-form]');
+  const createForm = event.target.closest('[data-profile-form]');
+  const editForm = event.target.closest('[data-edit-form]');
 
-  if (!form) {
+  if (createForm) {
+    event.preventDefault();
+    handleCreateForm(createForm);
     return;
   }
 
-  event.preventDefault();
+  if (editForm) {
+    event.preventDefault();
+    handleEditForm(editForm);
+  }
+});
 
+screen.addEventListener('click', (event) => {
+  const deleteButton = event.target.closest('[data-delete-item]');
+
+  if (!deleteButton) {
+    return;
+  }
+
+  const type = deleteButton.dataset.deleteItem;
+  const id = deleteButton.dataset.itemId;
+
+  deleteItem(type, id);
+  renderProfileType(type);
+});
+
+function handleCreateForm(form) {
   const formData = new FormData(form);
   const type = form.dataset.profileForm;
 
@@ -513,7 +569,7 @@ screen.addEventListener('submit', (event) => {
 
     if (name && note) {
       createItem('mentors', { name, note });
-      renderScreen('mentors');
+      renderProfileType(type);
     }
   }
 
@@ -523,10 +579,40 @@ screen.addEventListener('submit', (event) => {
 
     if (title && value) {
       createItem('goals', { title, value });
-      renderScreen('goals');
+      renderProfileType(type);
     }
   }
-});
+}
+
+function handleEditForm(form) {
+  const formData = new FormData(form);
+  const type = form.dataset.editForm;
+  const id = form.dataset.itemId;
+
+  if (type === 'mentors') {
+    const name = String(formData.get('name') || '').trim();
+    const note = String(formData.get('note') || '').trim();
+
+    if (name && note) {
+      updateItem('mentors', id, { name, note });
+      renderProfileType(type);
+    }
+  }
+
+  if (type === 'goals') {
+    const title = String(formData.get('title') || '').trim();
+    const value = String(formData.get('value') || '').trim();
+
+    if (title && value) {
+      updateItem('goals', id, { title, value });
+      renderProfileType(type);
+    }
+  }
+}
+
+function renderProfileType(type) {
+  renderScreen(type === 'mentors' ? 'mentors' : 'goals');
+}
 
 window.addEventListener('hashchange', () => {
   renderNav(getInitialScreenId());
