@@ -180,6 +180,7 @@ const storageKeys = {
 const nav = document.querySelector('#main-nav');
 const screen = document.querySelector('#screen');
 let isClearDataPending = false;
+let didSaveCoachInsight = false;
 
 function readItems(type) {
   try {
@@ -917,6 +918,7 @@ function renderAiCoachPanel() {
                 </div>`
               : ''
           }
+          ${didSaveCoachInsight ? '<p class="inline-success">Saved to Saved Insights.</p>' : ''}
         </div>
 
         <label class="field">
@@ -980,6 +982,10 @@ function renderSettingsPanel() {
 function setActiveScreen(screenId) {
   if (screenId !== 'settings') {
     isClearDataPending = false;
+  }
+
+  if (screenId !== 'ai-coach') {
+    didSaveCoachInsight = false;
   }
 
   renderNav(screenId);
@@ -1165,6 +1171,7 @@ function handleCoachCheckInForm(form) {
   }
 
   saveCoachCheckIn(checkIn);
+  didSaveCoachInsight = false;
   renderScreen('ai-coach');
 }
 
@@ -1178,6 +1185,7 @@ function handleSaveCoachInsight() {
   createItem('insights', {
     text: coachCheckIn.text
   });
+  didSaveCoachInsight = true;
   renderScreen('ai-coach');
 }
 
