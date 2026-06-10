@@ -6,7 +6,7 @@ const screens = [
     eyebrow: 'Focus Feed',
     title: 'A quieter feed for trusted signals.',
     copy:
-      'The future home for curated insight from voices you trust, filtered through the goals and values you choose.',
+      'Review your focus, trusted voices, goals, and saved notes in one calm local dashboard.',
     metrics: [
       ['0', 'Connected sources'],
       ['0', 'Active goals'],
@@ -15,15 +15,15 @@ const screens = [
     cards: [
       {
         title: 'Curated influence',
-        body: 'A placeholder for updates from a small circle of mentors, authors, creators, and advisors.'
+        body: 'Keep a small circle of mentors, authors, creators, and advisors close to your goals.'
       },
       {
         title: 'Goal alignment',
-        body: 'Future feed items can be connected to goals so attention stays pointed at what matters.'
+        body: 'Use your goals and values to decide which inputs deserve attention.'
       },
       {
         title: 'Low-distraction rhythm',
-        body: 'No infinite scroll or external imports yet; this shell is intentionally calm and local.'
+        body: 'No feeds, imports, or algorithms yet; everything here stays calm and local.'
       }
     ]
   },
@@ -34,7 +34,7 @@ const screens = [
     eyebrow: 'Trusted voices',
     title: 'Choose the people worth listening to.',
     copy:
-      'This screen will eventually hold a small, intentional list of sources. For now, it marks the place where those choices will live.',
+      'Add a small, intentional list of people and sources that help you stay aligned.',
     metrics: [
       ['Small', 'Source set'],
       ['Manual', 'Curation style'],
@@ -62,7 +62,7 @@ const screens = [
     eyebrow: 'Direction',
     title: 'Keep goals visible before inputs arrive.',
     copy:
-      'A simple placeholder for personal goals, values, and focus themes that can later guide recommendations and reflection.',
+      'Add the goals, values, and focus themes that should guide what you pay attention to.',
     metrics: [
       ['3', 'Example lanes'],
       ['Values', 'First filter'],
@@ -90,11 +90,11 @@ const screens = [
     eyebrow: 'Library',
     title: 'Save what should shape the next decision.',
     copy:
-      'This area will collect selected ideas, quotes, and reflections. Phase 1 only provides the surface.',
+      'Review the short reflections and takeaways you chose to keep.',
     metrics: [
       ['0', 'Saved notes'],
-      ['0', 'Linked goals'],
-      ['Soon', 'Search']
+      ['Manual', 'Capture mode'],
+      ['Local', 'Storage mode']
     ],
     cards: [
       {
@@ -116,9 +116,9 @@ const screens = [
     label: 'AI Coach',
     icon: '05',
     eyebrow: 'Future coach',
-    title: 'AI coaching will come after the foundation.',
+    title: 'A simple coach space for reflection.',
     copy:
-      'No AI logic is implemented in this phase. This placeholder keeps the navigation ready for a future coach that understands your goals and sources.',
+      'Use this local shell for light accountability today. Real AI coaching is not connected yet.',
     metrics: [
       ['Off', 'AI status'],
       ['None', 'Model connections'],
@@ -146,7 +146,7 @@ const screens = [
     eyebrow: 'Preferences',
     title: 'Keep the app private, calm, and configurable.',
     copy:
-      'A placeholder for future controls around privacy, appearance, source limits, and local data.',
+      'Manage local app state and keep the experience simple while the foundation takes shape.',
     metrics: [
       ['Dark', 'Theme'],
       ['Local', 'Current data mode'],
@@ -403,8 +403,8 @@ function renderProfileSummary(activeId) {
       ${renderHomeEmptyGuide(mentors, goals)}
 
       <div class="selected-grid">
-        ${renderSelectedList('Selected mentors / sources', mentors, 'name', 'note', 'Add sources from Mentors / Sources to tune this feed.')}
-        ${renderSelectedList('Selected goals / values', goals, 'title', 'value', 'Add goals from Goals / Values to give the feed direction.')}
+        ${renderSelectedList('Selected mentors / sources', mentors, 'name', 'note', 'Add one source to start shaping your inputs.')}
+        ${renderSelectedList('Selected goals / values', goals, 'title', 'value', 'Add one goal or value to give the feed direction.')}
       </div>
 
       ${renderRecentActivity()}
@@ -439,7 +439,7 @@ function getAlignmentMessage(mentors, goals) {
   }
 
   if (goals.length > 0) {
-    return 'You have goals and values saved. Add one trusted source next so the feed can show who helps reinforce them.';
+    return 'You have goals and values saved. Add one trusted source next so the feed can show who supports them.';
   }
 
   return 'Add a few trusted sources and goals to turn this Home screen into a simple local focus dashboard.';
@@ -453,7 +453,7 @@ function renderTodayFocus() {
       <div>
         <p class="eyebrow">Today's focus</p>
         <h3>${todayFocus ? escapeHtml(todayFocus) : 'Set one short intention for this session.'}</h3>
-        <p class="profile-intro">Keep the current focus visible while you review your local feed.</p>
+        <p class="profile-intro">Keep one clear intention visible while you use the app.</p>
       </div>
 
       <label class="field">
@@ -531,7 +531,7 @@ function renderRecentActivity() {
 
       ${
         activities.length === 0
-          ? '<p class="empty-state">Recent additions will appear here after you add a source, goal, or saved insight.</p>'
+          ? '<p class="empty-state">Add a source, goal, or insight to see recent activity here.</p>'
           : `<div class="activity-list">
               ${activities
                 .map(
@@ -681,13 +681,13 @@ function renderInsightCaptureForm() {
     <form class="insight-capture" data-insight-form>
       <div>
         <p class="eyebrow">Save a takeaway</p>
-        <h3>Capture a short reflection from this focus snapshot.</h3>
-        <p class="profile-intro">Saved insights stay local and appear in the Saved Insights screen.</p>
+        <h3>Save a short takeaway.</h3>
+        <p class="profile-intro">Keep one useful thought from this focus snapshot for later review.</p>
       </div>
 
       <label class="field">
         <span>Insight or note</span>
-        <textarea name="text" maxlength="240" rows="3" placeholder="What do you want to remember or act on?" required></textarea>
+        <textarea name="text" maxlength="240" rows="3" placeholder="What is worth remembering?" required></textarea>
       </label>
 
       <button class="primary-button" type="submit">Save insight</button>
@@ -727,8 +727,8 @@ function renderMentorPanel() {
       <form class="profile-form" data-profile-form="mentors">
         <div>
           <p class="eyebrow">Manual source</p>
-          <h3 id="mentor-form-title">Add a mentor or source</h3>
-          <p class="profile-intro">Start with a few people whose judgment helps you stay aligned.</p>
+          <h3 id="mentor-form-title">Save a trusted source</h3>
+          <p class="profile-intro">Start with someone whose judgment helps you make better choices.</p>
         </div>
 
         <label class="field">
@@ -737,22 +737,22 @@ function renderMentorPanel() {
         </label>
 
         <label class="field">
-          <span>Why they matter</span>
+          <span>Why this source helps</span>
           <textarea name="note" maxlength="180" rows="3" placeholder="What do they help you remember or practice?" required></textarea>
         </label>
 
-        <button class="primary-button" type="submit">Add source</button>
+        <button class="primary-button" type="submit">Save source</button>
       </form>
 
       ${renderItemList({
         title: 'Saved mentors and sources',
-        emptyText: 'No trusted sources saved yet.',
+        emptyText: 'No sources yet. Add one person or creator you trust.',
         items: mentors,
         type: 'mentors',
         titleKey: 'name',
         bodyKey: 'note',
         titleLabel: 'Name',
-        bodyLabel: 'Why they matter'
+        bodyLabel: 'Why this source helps'
       })}
     </section>
   `;
@@ -766,8 +766,8 @@ function renderGoalPanel() {
       <form class="profile-form" data-profile-form="goals">
         <div>
           <p class="eyebrow">Personal direction</p>
-          <h3 id="goal-form-title">Add a goal or value</h3>
-          <p class="profile-intro">Capture the outcomes and principles your inputs should support.</p>
+          <h3 id="goal-form-title">Save a goal or value</h3>
+          <p class="profile-intro">Name what your attention should support.</p>
         </div>
 
         <label class="field">
@@ -780,12 +780,12 @@ function renderGoalPanel() {
           <textarea name="value" maxlength="180" rows="3" placeholder="How should this shape your attention?" required></textarea>
         </label>
 
-        <button class="primary-button" type="submit">Add goal</button>
+        <button class="primary-button" type="submit">Save goal</button>
       </form>
 
       ${renderItemList({
         title: 'Saved goals and values',
-        emptyText: 'No goals or values saved yet.',
+        emptyText: 'No goals yet. Add one direction or value to protect.',
         items: goals,
         type: 'goals',
         titleKey: 'title',
@@ -819,7 +819,7 @@ function renderItemList({ title, emptyText, items, type, titleKey, bodyKey, titl
                     </label>
 
                     <div class="profile-actions">
-                      <button class="secondary-button" type="submit">Save</button>
+                      <button class="secondary-button" type="submit">Save changes</button>
                       <button class="danger-button" type="button" data-delete-item="${type}" data-item-id="${escapeHtml(item.id)}">Delete</button>
                     </div>
                   </form>
@@ -839,12 +839,12 @@ function renderSavedInsightsPanel() {
       <div>
         <p class="eyebrow">Local notes</p>
         <h3 id="saved-insights-title">Saved insights</h3>
-        <p class="profile-intro">Short reflections captured from the Focus Feed. Delete anything that no longer belongs.</p>
+        <p class="profile-intro">Short reflections you chose to keep. Delete anything that no longer belongs.</p>
       </div>
 
       ${
         insights.length === 0
-          ? '<p class="empty-state">No saved insights yet. Capture one from the Focus Feed when something feels worth remembering.</p>'
+          ? '<p class="empty-state">No insights yet. Save a takeaway from Home or the AI Coach when something is worth keeping.</p>'
           : `<div class="saved-insight-list">
               ${insights
                 .map(
@@ -908,13 +908,13 @@ function renderAiCoachPanel() {
       <form class="coach-check-in" data-coach-check-in-form>
         <div>
           <p class="eyebrow">Manual check-in</p>
-          <h3>${coachCheckIn ? 'Latest saved reflection' : 'Record one short daily reflection.'}</h3>
-          <p class="profile-intro">${coachCheckIn ? escapeHtml(coachCheckIn.text) : 'Write a small note about how your focus is going today. This stays local.'}</p>
+          <h3>${coachCheckIn ? 'Latest check-in' : 'Write one short check-in.'}</h3>
+          <p class="profile-intro">${coachCheckIn ? escapeHtml(coachCheckIn.text) : 'Capture how your focus is going today. This stays local.'}</p>
           ${coachCheckIn ? `<span>${formatActivityDate(coachCheckIn.createdAt)}</span>` : ''}
           ${
             coachCheckIn
               ? `<div class="profile-actions">
-                  <button class="secondary-button" type="button" data-save-coach-insight>Save as insight</button>
+                  <button class="secondary-button" type="button" data-save-coach-insight>Save to insights</button>
                 </div>`
               : ''
           }
@@ -926,7 +926,7 @@ function renderAiCoachPanel() {
           <textarea name="checkIn" maxlength="240" rows="3" placeholder="Example: I protected one focused block and need a smaller next step." required></textarea>
         </label>
 
-        <button class="secondary-button" type="submit">${coachCheckIn ? 'Replace check-in' : 'Save check-in'}</button>
+        <button class="secondary-button" type="submit">${coachCheckIn ? 'Update check-in' : 'Save check-in'}</button>
       </form>
     </section>
   `;
@@ -954,8 +954,8 @@ function renderSettingsPanel() {
     <section class="settings-panel" aria-labelledby="local-data-title">
       <div>
         <p class="eyebrow">Local data</p>
-        <h3 id="local-data-title">Reset local app state</h3>
-        <p class="profile-intro">Clear saved mentors, goals, and insights from this device when you want to start fresh.</p>
+        <h3 id="local-data-title">Clear local app data</h3>
+        <p class="profile-intro">Remove saved sources, goals, insights, focus, and check-in notes from this device.</p>
       </div>
 
       <div class="settings-counts" aria-label="Local data counts">
@@ -967,13 +967,13 @@ function renderSettingsPanel() {
       ${
         isClearDataPending
           ? `<div class="confirm-clear" role="group" aria-label="Confirm local data reset">
-              <p>This will remove ${totalItems} local item${totalItems === 1 ? '' : 's'} from this app on this device.</p>
+              <p>This will remove ${totalItems} saved item${totalItems === 1 ? '' : 's'} plus your focus and check-in notes from this device.</p>
               <div class="profile-actions">
-                <button class="danger-button" type="button" data-confirm-clear>Confirm clear all</button>
+                <button class="danger-button" type="button" data-confirm-clear>Yes, clear local data</button>
                 <button class="secondary-button" type="button" data-cancel-clear>Cancel</button>
               </div>
             </div>`
-          : '<button class="danger-button" type="button" data-request-clear>Clear all local data</button>'
+          : '<button class="danger-button" type="button" data-request-clear>Clear local data</button>'
       }
     </section>
   `;
