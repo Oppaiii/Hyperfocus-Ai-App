@@ -870,6 +870,7 @@ function renderAiCoachPanel() {
   const goals = readItems('goals');
   const recentGoal = goals[0];
   const coachCheckIn = readCoachCheckIn();
+  const coachPrompt = buildLocalCoachPrompt();
 
   return `
     <section class="coach-panel" aria-labelledby="coach-check-in-title">
@@ -928,6 +929,45 @@ function renderAiCoachPanel() {
 
         <button class="secondary-button" type="submit">${coachCheckIn ? 'Update check-in' : 'Save check-in'}</button>
       </form>
+
+      ${renderCoachPromptPreview(coachPrompt)}
+    </section>
+  `;
+}
+
+function buildLocalCoachPrompt() {
+  if (!window.CoachPromptBuilder) {
+    return null;
+  }
+
+  return window.CoachPromptBuilder.buildCoachPrompt({
+    todayFocus: readTodayFocus(),
+    goals: readItems('goals'),
+    latestCoachReflection: readCoachCheckIn(),
+    recentInsights: readItems('insights').slice(0, 3),
+    coachRules: window.CoachPromptBuilder.DEFAULT_COACH_RULES
+  });
+}
+
+function renderCoachPromptPreview(coachPrompt) {
+  if (!coachPrompt) {
+    return `
+      <section class="prompt-preview" aria-label="AI Coach prompt preview">
+        <p class="eyebrow">Prompt preview</p>
+        <h3>Prompt builder is not loaded.</h3>
+        <p class="profile-intro">The AI Coach prompt preview will appear here when the local builder is available.</p>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="prompt-preview" aria-label="AI Coach prompt preview">
+      <div>
+        <p class="eyebrow">Prompt preview</p>
+        <h3>What would be sent to a future AI model</h3>
+        <p class="profile-intro">This is built locally from your focus, goals, latest check-in, recent insights, and coach rules. No API call is made.</p>
+      </div>
+      <pre>${escapeHtml(coachPrompt.previewText)}</pre>
     </section>
   `;
 }

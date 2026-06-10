@@ -310,6 +310,7 @@ button {
 .coach-intro h3,
 .coach-card h3,
 .coach-check-in h3,
+.prompt-preview h3,
 .insight-card h3,
 .insight-capture h3,
 .saved-insights-panel h3,
@@ -325,6 +326,7 @@ button {
 .home-empty-guide .profile-intro,
 .coach-intro .profile-intro,
 .coach-check-in .profile-intro,
+.prompt-preview .profile-intro,
 .insight-capture .profile-intro,
 .saved-insights-panel .profile-intro,
 .settings-panel .profile-intro {
@@ -522,6 +524,30 @@ button {
   color: var(--success);
   font-size: 0.88rem;
   font-weight: 700;
+}
+
+.prompt-preview {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.prompt-preview pre {
+  overflow: auto;
+  max-height: 360px;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  color: var(--soft);
+  background: rgba(0, 0, 0, 0.22);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
 }
 
 .summary-columns {
