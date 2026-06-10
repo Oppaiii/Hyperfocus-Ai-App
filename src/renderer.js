@@ -647,7 +647,7 @@ function renderSavedInsightsPanel() {
       <div>
         <p class="eyebrow">Local notes</p>
         <h3 id="saved-insights-title">Saved insights</h3>
-        <p class="profile-intro">Short reflections captured from the Focus Feed. These are read-only for now.</p>
+        <p class="profile-intro">Short reflections captured from the Focus Feed. Delete anything that no longer belongs.</p>
       </div>
 
       ${
@@ -660,6 +660,9 @@ function renderSavedInsightsPanel() {
                     <article class="saved-insight">
                       <p>${escapeHtml(insight.text)}</p>
                       <span>${formatInsightDate(insight.createdAt)}</span>
+                      <div class="profile-actions">
+                        <button class="danger-button" type="button" data-delete-item="insights" data-item-id="${escapeHtml(insight.id)}">Delete</button>
+                      </div>
                     </article>
                   `
                 )
@@ -804,7 +807,17 @@ function handleInsightForm(form) {
 }
 
 function renderProfileType(type) {
-  renderScreen(type === 'mentors' ? 'mentors' : 'goals');
+  if (type === 'mentors') {
+    renderScreen('mentors');
+    return;
+  }
+
+  if (type === 'insights') {
+    renderScreen('saved-insights');
+    return;
+  }
+
+  renderScreen('goals');
 }
 
 window.addEventListener('hashchange', () => {
