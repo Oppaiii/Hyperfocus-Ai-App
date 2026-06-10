@@ -177,6 +177,7 @@ const storageKeys = {
 
 const nav = document.querySelector('#main-nav');
 const screen = document.querySelector('#screen');
+let isClearDataPending = false;
 
 function readItems(type) {
   try {
@@ -210,6 +211,12 @@ function deleteItem(type, id) {
     type,
     items.filter((item) => item.id !== id)
   );
+}
+
+function clearAllLocalData() {
+  Object.values(storageKeys).forEach((key) => {
+    localStorage.removeItem(key);
+  });
 }
 
 function createId() {
@@ -524,6 +531,10 @@ function renderProfilePanel(activeId) {
     return renderSavedInsightsPanel();
   }
 
+  if (activeId === 'settings') {
+    return renderSettingsPanel();
+  }
+
   return '';
 }
 
@@ -685,7 +696,46 @@ function formatInsightDate(value) {
   })}`;
 }
 
+function renderSettingsPanel() {
+  const mentors = readItems('mentors');
+  const goals = readItems('goals');
+  const insights = readItems('insights');
+  const totalItems = mentors.length + goals.length + insights.length;
+
+  return `
+    <section class="settings-panel" aria-labelledby="local-data-title">
+      <div>
+        <p class="eyebrow">Local data</p>
+        <h3 id="local-data-title">Reset local app state</h3>
+        <p class="profile-intro">Clear saved mentors, goals, and insights from this device when you want to start fresh.</p>
+      </div>
+
+      <div class="settings-counts" aria-label="Local data counts">
+        <span>${mentors.length} sources</span>
+        <span>${goals.length} goals</span>
+        <span>${insights.length} insights</span>
+      </div>
+
+      ${
+        isClearDataPending
+          ? `<div class="confirm-clear" role="group" aria-label="Confirm local data reset">
+              <p>This will remove ${totalItems} local item${totalItems === 1 ? '' : 's'} from this app on this device.</p>
+              <div class="profile-actions">
+                <button class="danger-button" type="button" data-confirm-clear>Confirm clear all</button>
+                <button class="secondary-button" type="button" data-cancel-clear>Cancel</button>
+              </div>
+            </div>`
+          : '<button class="danger-button" type="button" data-request-clear>Clear all local data</button>'
+      }
+    </section>
+  `;
+}
+
 function setActiveScreen(screenId) {
+  if (screenId !== 'settings') {
+    isClearDataPending = false;
+  }
+
   renderNav(screenId);
   renderScreen(screenId);
   window.location.hash = screenId;
@@ -726,7 +776,29 @@ screen.addEventListener('submit', (event) => {
 });
 
 screen.addEventListener('click', (event) => {
+  const requestClearButton = event.target.closest('[data-request-clear]');
+  const cancelClearButton = event.target.closest('[data-cancel-clear]');
+  const confirmClearButton = event.target.closest('[data-confirm-clear]');
   const deleteButton = event.target.closest('[data-delete-item]');
+
+  if (requestClearButton) {
+    isClearDataPending = true;
+    renderScreen('settings');
+    return;
+  }
+
+  if (cancelClearButton) {
+    isClearDataPending = false;
+    renderScreen('settings');
+    return;
+  }
+
+  if (confirmClearButton) {
+    clearAllLocalData();
+    isClearDataPending = false;
+    renderScreen('settings');
+    return;
+  }
 
   if (!deleteButton) {
     return;

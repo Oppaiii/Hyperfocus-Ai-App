@@ -285,7 +285,8 @@ button {
 .profile-summary,
 .profile-panel,
 .focus-dashboard,
-.saved-insights-panel {
+.saved-insights-panel,
+.settings-panel {
   border: 1px solid var(--line);
   border-radius: 28px;
   background: rgba(255, 255, 255, 0.055);
@@ -302,7 +303,8 @@ button {
 .selected-list h3,
 .insight-card h3,
 .insight-capture h3,
-.saved-insights-panel h3 {
+.saved-insights-panel h3,
+.settings-panel h3 {
   margin: 0;
   letter-spacing: -0.03em;
 }
@@ -311,7 +313,8 @@ button {
 .profile-form .profile-intro,
 .alignment-card .profile-intro,
 .insight-capture .profile-intro,
-.saved-insights-panel .profile-intro {
+.saved-insights-panel .profile-intro,
+.settings-panel .profile-intro {
   margin: 10px 0 0;
 }
 
@@ -442,6 +445,41 @@ button {
 
 .saved-insight .profile-actions {
   margin-top: 14px;
+}
+
+.settings-panel {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+}
+
+.settings-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.settings-counts span {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--soft);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.confirm-clear {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgba(248, 113, 113, 0.26);
+  border-radius: 20px;
+  background: rgba(127, 29, 29, 0.12);
+}
+
+.confirm-clear p {
+  margin: 0;
+  color: #fecaca;
+  line-height: 1.6;
 }
 
 .profile-panel {

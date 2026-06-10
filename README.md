@@ -14,10 +14,11 @@ This first pass contains only the app foundation:
 - Local-only manual entry, editing, and deletion for mentors / sources and goals / values
 - Local-only Focus Feed alignment snapshot built from saved mentors and goals
 - Local-only manual saved-insight capture and deletion from the Focus Feed
+- Local-only Settings reset control for clearing app data
 
 No AI logic or external content source integrations are implemented yet.
 
-Saved mentors, goals, and insights are stored in the app's local browser storage for now. The Focus Feed snapshot is generated from that local data only. There is no syncing, search, analytics, AI processing, or external API connection.
+Saved mentors, goals, and insights are stored in the app's local browser storage for now. The Focus Feed snapshot is generated from that local data only, and Settings can clear the local app state after confirmation. There is no syncing, search, analytics, AI processing, or external API connection.
 
 ## Run locally
 
