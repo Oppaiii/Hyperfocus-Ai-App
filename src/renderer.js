@@ -1028,6 +1028,15 @@ function renderSettingsPanel() {
 
   return `
     <section class="settings-panel" aria-labelledby="local-data-title">
+      <div class="settings-row">
+        <div>
+          <p class="eyebrow">AI provider</p>
+          <h3>Connect real AI provider</h3>
+          <p class="profile-intro">Not connected yet. The app is still using the local mock provider only.</p>
+        </div>
+        <button class="secondary-button disabled-button" type="button" disabled>Coming later</button>
+      </div>
+
       <div>
         <p class="eyebrow">Local data</p>
         <h3 id="local-data-title">Clear local app data</h3>

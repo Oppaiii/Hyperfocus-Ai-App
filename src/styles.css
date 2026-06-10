@@ -315,7 +315,8 @@ button {
 .insight-card h3,
 .insight-capture h3,
 .saved-insights-panel h3,
-.settings-panel h3 {
+.settings-panel h3,
+.settings-row h3 {
   margin: 0;
   letter-spacing: -0.03em;
 }
@@ -331,7 +332,8 @@ button {
 .mock-reply .profile-intro,
 .insight-capture .profile-intro,
 .saved-insights-panel .profile-intro,
-.settings-panel .profile-intro {
+.settings-panel .profile-intro,
+.settings-row .profile-intro {
   margin: 10px 0 0;
 }
 
@@ -692,6 +694,17 @@ button {
   padding: 24px;
 }
 
+.settings-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
 .settings-counts {
   display: flex;
   flex-wrap: wrap;
@@ -719,6 +732,14 @@ button {
   margin: 0;
   color: #fecaca;
   line-height: 1.6;
+}
+
+.disabled-button,
+.disabled-button:hover,
+.disabled-button:focus-visible {
+  cursor: not-allowed;
+  opacity: 0.52;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .profile-panel {
